@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, type ReactNode } from "react";
+import { useState, useMemo, type ReactNode } from "react";
 import {
   ArrowUpDown,
   ArrowUp,
@@ -11,8 +11,6 @@ import {
   TrendingUp,
   Users,
   Calendar,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import type {
   BeneficiadorIndicador,
@@ -30,8 +28,6 @@ import { cn } from "@/utils/cn";
 
 interface DataTableProps {
   data: BeneficiadorIndicador[];
-  materialDetails: Record<string, BeneficiadorIndicador[]>;
-  materialDescriptions: Record<string, string>;
   loading: boolean;
   onRowClick: (row: BeneficiadorIndicador) => void;
   page: number;
@@ -135,21 +131,12 @@ function ProportionalBar({
   );
 }
 
-export function DataTable({
-  data,
-  materialDetails,
-  materialDescriptions,
-  loading,
-  onRowClick,
-  page,
-  onPageChange,
-}: DataTableProps) {
+export function DataTable({ data, loading, onRowClick, page, onPageChange }: DataTableProps) {
   const [sort, setSort] = useState<SortState>({
     column: "capacidade_media_mensal",
     direction: "desc",
   });
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const proximityRankMap = useMemo(() => {
     const sorted = [...data]
@@ -408,19 +395,6 @@ export function DataTable({
     onPageChange(0);
   };
 
-  const getMaterialRows = (beneficiadorId: string | number) =>
-    Object.entries(materialDetails)
-      .filter(([material]) => !material.includes("::"))
-      .flatMap(([material, rows]) =>
-        rows
-          .filter((row) => String(row.beneficiador_id).trim() === String(beneficiadorId).trim())
-          .map((row) => ({
-            ...row,
-            material,
-            material_descricao: materialDescriptions[material],
-          })),
-      );
-
   const SortIcon = ({ col }: { col: string }) => {
     const sortCol = columns.find((c) => c.key === col);
     if (!sortCol?.sortKey) return null;
@@ -537,119 +511,33 @@ export function DataTable({
                 const rank = proximityRankMap[String(row.beneficiador_id)];
                 const isTop3 = rank && rank <= 3;
                 const globalIndex = currentPage * pageSize + rowIndex;
-                const rowId = String(row.beneficiador_id).trim();
-                const isExpanded = expandedId === rowId;
-                const materialRows = isExpanded ? getMaterialRows(row.beneficiador_id) : [];
 
                 return (
-                  <Fragment key={row.beneficiador_id}>
-                    <tr
-                      className={cn(
-                        "cursor-pointer border-b border-slate-100 transition-all duration-300",
-                        "hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/40 hover:shadow-sm",
-                        isTop3 &&
-                          "bg-gradient-to-r from-amber-50/60 via-amber-50/30 to-transparent border-l-4 border-l-amber-400",
-                        !isTop3 && globalIndex % 2 === 0 && "bg-slate-50/30",
-                        "group",
-                      )}
-                      onClick={() => onRowClick(row)}
-                    >
-                      {columns.map((col) => (
-                        <td
-                          key={col.key}
-                          className={cn(
-                            "px-4 py-4 text-slate-700 transition-colors duration-200",
-                            col.align === "right" && "text-right",
-                            col.align === "center" && "text-center",
-                          )}
-                        >
-                          {col.key === "beneficiador_nome" ? (
-                            <div className="flex items-start gap-2">
-                              <button
-                                type="button"
-                                aria-label={isExpanded ? "Ocultar materiais" : "Exibir materiais"}
-                                title={isExpanded ? "Ocultar materiais" : "Exibir materiais"}
-                                className="mt-0.5 rounded-md p-1 text-slate-400 transition hover:bg-blue-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  setExpandedId(isExpanded ? null : rowId);
-                                }}
-                              >
-                                {isExpanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                              </button>
-                              {col.render(row)}
-                            </div>
-                          ) : (
-                            col.render(row)
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                    {isExpanded && (
-                      <tr key={`${row.beneficiador_id}-details`} className="border-b border-blue-100 bg-blue-50/30">
-                        <td colSpan={columns.length} className="px-6 py-3 sm:px-10">
-                          <div className="overflow-x-auto rounded-lg border border-blue-100 bg-white/80 p-2 shadow-inner">
-                            {materialRows.length === 0 ? (
-                              <p className="px-4 py-3 text-xs text-slate-500">
-                                Nenhum material vinculado encontrado.
-                              </p>
-                            ) : (
-                              <table className="w-full min-w-[1100px] text-sm">
-                                <thead>
-                                  <tr className="border-b border-blue-100 bg-blue-50/70">
-                                    {columns
-                                      .filter((col) => col.key !== "ranking")
-                                      .map((col) => (
-                                        <th
-                                          key={col.key}
-                                          className={cn(
-                                            "px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-blue-900/70",
-                                            col.align === "right" && "text-right",
-                                            col.align === "center" && "text-center",
-                                            col.align === "left" && "text-left",
-                                          )}
-                                        >
-                                          {col.key === "beneficiador_nome" ? "Material / Descrição" : col.label}
-                                        </th>
-                                      ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {materialRows.map((materialRow, materialIndex) => (
-                                    <tr key={`${materialRow.material}-${materialIndex}`} className="border-b border-slate-100 last:border-0">
-                                      {columns
-                                        .filter((col) => col.key !== "ranking")
-                                        .map((col) => (
-                                          <td
-                                            key={col.key}
-                                            className={cn(
-                                              "px-3 py-3 text-slate-700",
-                                              col.align === "right" && "text-right",
-                                              col.align === "center" && "text-center",
-                                            )}
-                                          >
-                                            {col.key === "beneficiador_nome"
-                                              ? (
-                                                <span className="flex flex-col">
-                                                  <span className="font-medium text-blue-800">{materialRow.material}</span>
-                                                  <span className="text-[11px] text-slate-500">
-                                                    {materialRow.material_descricao || "Descrição não informada"}
-                                                  </span>
-                                                </span>
-                                              )
-                                              : col.render(materialRow)}
-                                          </td>
-                                        ))}
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
+                  <tr
+                    key={row.beneficiador_id}
+                    className={cn(
+                      "cursor-pointer border-b border-slate-100 transition-all duration-300",
+                      "hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/40 hover:shadow-sm",
+                      isTop3 && 
+                        "bg-gradient-to-r from-amber-50/60 via-amber-50/30 to-transparent border-l-4 border-l-amber-400",
+                      !isTop3 && globalIndex % 2 === 0 && "bg-slate-50/30",
+                      "group"
                     )}
-                  </Fragment>
+                    onClick={() => onRowClick(row)}
+                  >
+                    {columns.map((col) => (
+                      <td
+                        key={col.key}
+                        className={cn(
+                          "px-4 py-4 text-slate-700 transition-colors duration-200",
+                          col.align === "right" && "text-right",
+                          col.align === "center" && "text-center",
+                        )}
+                      >
+                        {col.render(row)}
+                      </td>
+                    ))}
+                  </tr>
                 );
               })
             )}
