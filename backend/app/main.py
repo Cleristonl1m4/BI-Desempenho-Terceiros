@@ -1,6 +1,7 @@
 from datetime import date
 from typing import List
 import logging
+import threading
 from pathlib import Path
 
 from fastapi import Depends, FastAPI
@@ -92,7 +93,8 @@ cache.set_loader(_load_cache_data)
 async def lifespan(app: FastAPI):
     logger.info("Aplicacao iniciando - carregando cache")
     cache.invalidate()
-    refresher.start()
+    # Não bloqueia o servidor enquanto o banco carrega o cache inicial.
+    threading.Thread(target=refresher.start, daemon=True, name="cache-startup").start()
     yield
     refresher.stop()
     logger.info("Aplicacao encerrando")
