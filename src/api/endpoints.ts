@@ -12,7 +12,7 @@ export interface IndicadoresPayload {
   beneficiadores_alocados_count: number;
 }
 
-const baseURL = import.meta.env.VITE_API_URL ?? "http://localhost:5017";
+const baseURL = import.meta.env.VITE_API_URL ?? "/api";
 
 export const apiClient = axios.create({
   baseURL,
