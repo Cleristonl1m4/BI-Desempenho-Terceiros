@@ -163,6 +163,8 @@ function DashboardContent() {
 
             <DataTable
               data={data}
+              materialDetails={payload?.indicadores_material ?? {}}
+              materialDescriptions={payload?.material_descriptions ?? {}}
               loading={loading}
               onRowClick={handleRowClick}
               page={page}
