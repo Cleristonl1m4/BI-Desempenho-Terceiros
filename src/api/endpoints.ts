@@ -8,6 +8,7 @@ import type {
 export interface IndicadoresPayload {
   indicadores: BeneficiadorIndicador[];
   indicadores_material: Record<string, BeneficiadorIndicador[]>;
+  material_descriptions: Record<string, string>;
   material_index: Record<string, string[]>;
   beneficiadores_alocados_count: number;
 }
@@ -35,6 +36,7 @@ export const beneficiadoresAPI = {
       return {
         indicadores: Array.isArray(data.indicadores) ? data.indicadores : [],
         indicadores_material: data.indicadores_material ?? {},
+        material_descriptions: data.material_descriptions ?? {},
         material_index: data.material_index ?? {},
         beneficiadores_alocados_count: data.beneficiadores_alocados_count ?? 0,
       };

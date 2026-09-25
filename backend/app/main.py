@@ -38,6 +38,12 @@ def _load_cache_data() -> dict:
             raw["capacidades"], raw["alocamentos"], raw["tempos"]
         )
         indicadores_material: dict[str, list] = {}
+        material_descriptions: dict[str, str] = {}
+        for relacao in raw["material_relacoes"]:
+            material = str(relacao.CD_MATERIAL).strip()
+            descricao = str(relacao.desc_material or "").strip()
+            if material and descricao and material not in material_descriptions:
+                material_descriptions[material] = descricao
         materiais = {
             str(capacidade.cd_material).strip()
             for capacidade in raw["capacidades"]
@@ -79,6 +85,7 @@ def _load_cache_data() -> dict:
         return {
             "indicadores": resultados,
             "indicadores_material": indicadores_material,
+            "material_descriptions": material_descriptions,
             "material_index": material_index,
             "beneficiadores_alocados_count": len(beneficiadores_alocados),
         }
@@ -141,6 +148,7 @@ async def get_indicadores_beneficiadores():
         return {
             "indicadores": cached,
             "indicadores_material": cache.get("indicadores_material") or {},
+            "material_descriptions": cache.get("material_descriptions") or {},
             "material_index": cache.get_material_index(),
             "beneficiadores_alocados_count": cache.get("beneficiadores_alocados_count") or 0,
         }
@@ -150,10 +158,12 @@ async def get_indicadores_beneficiadores():
         resultados = await run_in_threadpool(_load_cache_data)
         cache.set("indicadores", resultados["indicadores"])
         cache.set("indicadores_material", resultados["indicadores_material"])
+        cache.set("material_descriptions", resultados["material_descriptions"])
         cache.set_material_index(resultados["material_index"])
         return {
             "indicadores": resultados["indicadores"],
             "indicadores_material": resultados["indicadores_material"],
+            "material_descriptions": resultados["material_descriptions"],
             "material_index": cache.get_material_index(),
             "beneficiadores_alocados_count": resultados["beneficiadores_alocados_count"],
         }
