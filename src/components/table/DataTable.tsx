@@ -38,6 +38,8 @@ interface DataTableProps {
   onPageChange: (page: number) => void;
 }
 
+const MATERIAL_PAGE_SIZE = 6;
+
 interface ColumnDef {
   key: string;
   label: string;
@@ -150,6 +152,7 @@ export function DataTable({
   });
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [materialPages, setMaterialPages] = useState<Record<string, number>>({});
 
   const proximityRankMap = useMemo(() => {
     const sorted = [...data]
@@ -540,6 +543,18 @@ export function DataTable({
                 const rowId = String(row.beneficiador_id).trim();
                 const isExpanded = expandedId === rowId;
                 const materialRows = isExpanded ? getMaterialRows(row.beneficiador_id) : [];
+                const materialTotalPages = Math.max(
+                  1,
+                  Math.ceil(materialRows.length / MATERIAL_PAGE_SIZE),
+                );
+                const materialPage = Math.min(
+                  materialPages[rowId] ?? 0,
+                  materialTotalPages - 1,
+                );
+                const materialPageRows = materialRows.slice(
+                  materialPage * MATERIAL_PAGE_SIZE,
+                  (materialPage + 1) * MATERIAL_PAGE_SIZE,
+                );
 
                 return (
                   <Fragment key={row.beneficiador_id}>
@@ -572,7 +587,15 @@ export function DataTable({
                                 className="mt-0.5 rounded-md p-1 text-slate-400 transition hover:bg-blue-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
                                 onClick={(event) => {
                                   event.stopPropagation();
-                                  setExpandedId(isExpanded ? null : rowId);
+                                  if (isExpanded) {
+                                    setExpandedId(null);
+                                  } else {
+                                    setExpandedId(rowId);
+                                    setMaterialPages((previous) => ({
+                                      ...previous,
+                                      [rowId]: 0,
+                                    }));
+                                  }
                                 }}
                               >
                                 {isExpanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -615,7 +638,7 @@ export function DataTable({
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {materialRows.map((materialRow, materialIndex) => (
+                                  {materialPageRows.map((materialRow, materialIndex) => (
                                     <tr key={`${materialRow.material}-${materialIndex}`} className="border-b border-slate-100 last:border-0">
                                       {columns
                                         .filter((col) => col.key !== "ranking")
@@ -644,6 +667,41 @@ export function DataTable({
                                   ))}
                                 </tbody>
                               </table>
+                            )}
+                            {materialRows.length > MATERIAL_PAGE_SIZE && (
+                              <div className="flex items-center justify-between border-t border-blue-100 px-2 pt-2 text-xs text-slate-500">
+                                <span>
+                                  Página {materialPage + 1} de {materialTotalPages} · {materialRows.length} materiais
+                                </span>
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    type="button"
+                                    disabled={materialPage === 0}
+                                    onClick={() =>
+                                      setMaterialPages((previous) => ({
+                                        ...previous,
+                                        [rowId]: materialPage - 1,
+                                      }))
+                                    }
+                                    className="rounded-md border border-slate-200 px-2 py-1 font-medium transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                  >
+                                    Anterior
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={materialPage >= materialTotalPages - 1}
+                                    onClick={() =>
+                                      setMaterialPages((previous) => ({
+                                        ...previous,
+                                        [rowId]: materialPage + 1,
+                                      }))
+                                    }
+                                    className="rounded-md border border-slate-200 px-2 py-1 font-medium transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-40"
+                                  >
+                                    Próxima
+                                  </button>
+                                </div>
+                              </div>
                             )}
                           </div>
                         </td>
