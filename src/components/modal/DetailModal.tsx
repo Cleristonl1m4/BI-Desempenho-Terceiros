@@ -96,6 +96,13 @@ export function DetailModal({ beneficiador, materials, onClose }: DetailModalPro
       label: "Média de Peças por Dia",
       value: formatNumber(beneficiador.media_pecas_dia),
     },
+    {
+      label: "Tempo Médio de Produção",
+      value:
+        beneficiador.media_tempo_producao_dias != null
+          ? `${beneficiador.media_tempo_producao_dias} dias`
+          : "-",
+    },
   ];
 
   return (
