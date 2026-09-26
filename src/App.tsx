@@ -140,6 +140,26 @@ function DashboardContent() {
     setSelected(null);
   };
 
+  const selectedMaterials = useMemo(() => {
+    if (!selected) return [];
+
+    return Object.entries(payload?.indicadores_material ?? {})
+      .filter(([material]) => !material.includes("::"))
+      .flatMap(([material, rows]) =>
+        rows
+          .filter(
+            (row) =>
+              String(row.beneficiador_id).trim() ===
+              String(selected.beneficiador_id).trim(),
+          )
+          .map((row) => ({
+            ...row,
+            material,
+            material_descricao: payload?.material_descriptions?.[material],
+          })),
+      );
+  }, [payload, selected]);
+
   return (
     <div className="min-h-screen bg-slate-50">
         <Header online={online} />
@@ -185,7 +205,11 @@ function DashboardContent() {
         )}
       </main>
 
-      <DetailModal beneficiador={selected} onClose={handleCloseModal} />
+      <DetailModal
+        beneficiador={selected}
+        materials={selectedMaterials}
+        onClose={handleCloseModal}
+      />
       <footer className="border-t border-slate-200 py-4 text-center text-xs text-slate-400">
         Dashboard de Indicadores de Capacidade - Beneficiadores
       </footer>

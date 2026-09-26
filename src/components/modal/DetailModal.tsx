@@ -18,6 +18,7 @@ import { CHART_COLORS } from "@/utils/constants";
 
 interface DetailModalProps {
   beneficiador: BeneficiadorIndicador | null;
+  materials: BeneficiadorIndicador[];
   onClose: () => void;
 }
 
@@ -31,7 +32,7 @@ const iconMap: Record<string, React.ReactNode> = {
   "Média de Peças por Dia": <Clock className="h-3.5 w-3.5" />,
 };
 
-export function DetailModal({ beneficiador, onClose }: DetailModalProps) {
+export function DetailModal({ beneficiador, materials, onClose }: DetailModalProps) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
