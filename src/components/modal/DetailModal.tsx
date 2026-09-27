@@ -105,6 +105,13 @@ export function DetailModal({ beneficiador, materials, onClose }: DetailModalPro
     },
   ];
 
+  const situationMessage =
+    beneficiador.situacao_capacidade === "Alta"
+      ? "Este beneficiador possui maior disponibilidade para novos materiais."
+      : beneficiador.situacao_capacidade === "Média"
+        ? "Este beneficiador opera com disponibilidade intermediária para novos materiais."
+        : "Este beneficiador opera com pouca disponibilidade para novos materiais.";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-fade-in"
@@ -179,6 +186,16 @@ export function DetailModal({ beneficiador, materials, onClose }: DetailModalPro
                 <SituationBadge situacao={beneficiador.situacao_capacidade} />
               </div>
             </div>
+          </div>
+
+          <div className="rounded-xl border border-blue-100 bg-gradient-to-r from-blue-50/70 to-indigo-50/40 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Award className="h-4 w-4 text-blue-600" />
+              <p className="text-xs font-semibold uppercase tracking-wide text-blue-900/70">
+                Leitura do indicador
+              </p>
+            </div>
+            <p className="mt-1 pl-6 text-sm text-slate-700">{situationMessage}</p>
           </div>
 
           {/* Individual chart */}
