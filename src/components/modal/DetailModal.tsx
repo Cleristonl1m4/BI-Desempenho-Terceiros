@@ -196,6 +196,9 @@ export function DetailModal({ beneficiador, materials, onClose }: DetailModalPro
               </p>
             </div>
             <p className="mt-1 pl-6 text-sm text-slate-700">{situationMessage}</p>
+            <p className="mt-1 pl-6 text-xs text-slate-500">
+              {materials.length} {materials.length === 1 ? "material vinculado" : "materiais vinculados"} · última entrega: {formatDate(beneficiador.ultima_data_inicio)}
+            </p>
           </div>
 
           <div className="overflow-hidden rounded-xl border border-slate-200/60 bg-white">
