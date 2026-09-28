@@ -223,7 +223,7 @@ export function DetailModal({ beneficiador, materials, onClose }: DetailModalPro
                         {material.material || "Material sem código"}
                       </p>
                       <p className="truncate text-xs text-slate-500">
-                        {material.material_descricao || "Descrição não informada"}
+                        {material.material_descricao || "Sem descrição cadastrada"}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
