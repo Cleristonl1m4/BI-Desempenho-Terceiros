@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { X, BarChart3, BarChart2, TrendingUp, Calendar, Package, Zap, User, Clock, Award } from "lucide-react";
+import { X, BarChart3, BarChart2, TrendingUp, Calendar, Package, Zap, User, Clock, Award, Layers } from "lucide-react";
 import type { BeneficiadorIndicador } from "@/types";
 import {
   BarChart,
@@ -196,6 +196,43 @@ export function DetailModal({ beneficiador, materials, onClose }: DetailModalPro
               </p>
             </div>
             <p className="mt-1 pl-6 text-sm text-slate-700">{situationMessage}</p>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-slate-200/60 bg-white">
+            <div className="flex items-center gap-2 border-b border-slate-200/60 bg-slate-50/70 px-4 py-3">
+              <Layers className="h-4 w-4 text-indigo-600" />
+              <h4 className="text-sm font-semibold text-slate-700">Materiais vinculados</h4>
+              <span className="ml-auto rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-semibold text-indigo-700">
+                {materials.length}
+              </span>
+            </div>
+            {materials.length === 0 ? (
+              <p className="px-4 py-4 text-sm text-slate-500">Nenhum material vinculado encontrado.</p>
+            ) : (
+              <div className="max-h-48 divide-y divide-slate-100 overflow-y-auto">
+                {materials.map((material, index) => (
+                  <div
+                    key={`${material.material}-${index}`}
+                    className="flex items-center justify-between gap-4 px-4 py-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-slate-800">
+                        {material.material || "Material sem código"}
+                      </p>
+                      <p className="truncate text-xs text-slate-500">
+                        {material.material_descricao || "Descrição não informada"}
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-xs font-semibold text-slate-700">
+                        {formatNumber(material.producao_total_alocada)} peças
+                      </p>
+                      <p className="text-[11px] text-slate-400">produção alocada</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Individual chart */}
