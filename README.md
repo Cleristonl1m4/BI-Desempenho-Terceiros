@@ -36,7 +36,7 @@ pip install -r backend\requirements.txt
 npm run dev
 ```
 
-O comando compila o frontend e inicia o FastAPI em `http://localhost:5017`. A mesma porta fornece:
+O comando compila o frontend e inicia o FastAPI em `http://localhost:5008`. A mesma porta fornece:
 
 - `GET /api/health`
 - `GET /api/beneficiadores/indicadores`
@@ -64,8 +64,8 @@ pytest -q backend\tests
 Com a aplicação em execução:
 
 ```powershell
-curl http://localhost:5017/api/health
-curl http://localhost:5017/api/beneficiadores/indicadores
+curl http://localhost:5008/api/health
+curl http://localhost:5008/api/beneficiadores/indicadores
 ```
 
 ## Estrutura
