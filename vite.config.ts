@@ -7,7 +7,7 @@ export default defineConfig({
 
   server: {
     host: '0.0.0.0',
-    port: 5017,
+    port: 5008,
   },
 
   resolve: {

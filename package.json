@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "npm run build && python -m uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 5017",
+    "dev": "npm run build && python -m uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 5008",
     "dev:frontend": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
-    "start": "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 5017",
-    "start:api": "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 5017"
+    "start": "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 5008",
+    "start:api": "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 5008"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
