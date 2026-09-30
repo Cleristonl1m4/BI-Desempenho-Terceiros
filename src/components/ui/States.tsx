@@ -25,7 +25,12 @@ export function ErrorState({ onRetry }: ErrorStateProps) {
 
 export function LoadingState() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
+    <div
+      className="flex min-h-screen items-center justify-center bg-slate-50 px-6"
+      role="status"
+      aria-live="polite"
+      aria-label="Carregando indicadores"
+    >
       <div className="flex w-full max-w-md flex-col items-center rounded-2xl border border-slate-200 bg-white px-8 py-12 text-center shadow-xl shadow-slate-200/50">
         <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-blue-600">
           <LoaderCircle className="h-8 w-8 animate-spin" aria-hidden="true" />
