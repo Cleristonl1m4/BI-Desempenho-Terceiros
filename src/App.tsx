@@ -9,7 +9,7 @@ import { ProductionTimeChart } from "@/components/charts/ProductionTimeChart";
 import { DataTable } from "@/components/table/DataTable";
 import { KpiCards } from "@/components/dashboard/KpiCards";
 import { DetailModal } from "@/components/modal/DetailModal";
-import { ErrorState } from "@/components/ui/States";
+import { ErrorState, LoadingState } from "@/components/ui/States";
 import { useIndicadores, useApiHealth } from "@/hooks/useIndicadores";
 import { BeneficiadorIndicador, IndicadorFilters, ChartTotals } from "@/types";
 import { DEFAULT_PAGE_SIZE } from "@/utils/constants";
@@ -159,6 +159,10 @@ function DashboardContent() {
           })),
       );
   }, [payload, selected]);
+
+  if (loading && !apiData) {
+    return <LoadingState />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
